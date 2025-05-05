@@ -1,3 +1,4 @@
+import configparser
 import streamlit as st
 import streamlit_scrollable_textbox as stx
 
@@ -14,9 +15,17 @@ from lib.utils import (
     get_saved_sessions
 )
 
+CONFIG_FILENAME = 'config.ini'
+
 ################################################################################################
 # PAGE SETUP
 ################################################################################################
+def load_config():
+    st.session_state.config.read(CONFIG_FILENAME)
+
+    st.session_state.mighty_summoner = eval(st.session_state.config['class_abilities']['mighty_summoner'])
+
+
 st.set_page_config(layout="wide")
 
 if "summoned_creatures" not in st.session_state:
@@ -24,6 +33,11 @@ if "summoned_creatures" not in st.session_state:
 
 if "session_log" not in st.session_state:
     st.session_state.session_log = [""]
+
+if "config" not in st.session_state:
+    st.session_state.config = configparser.ConfigParser()
+
+load_config()
 
 creature_names = get_all_creature_names()
 
@@ -38,7 +52,7 @@ def summon_dialog():
         creature_names,
     )
     number = st.number_input("How many?",value=1)
-    mighty_summoner = st.checkbox("Apply Mighty Summoner (lvl 6)?", value=False)
+    mighty_summoner = st.checkbox("Apply Mighty Summoner (lvl 6)?", value=st.session_state.mighty_summoner)
 
     if st.button("Submit"):
         st.session_state.summoned_creatures = []
@@ -77,7 +91,7 @@ def conjure_animals_dialog():
     
     summonable_crs = allowed_cr & set(creature_options.keys()) # intersection of allowed and existing
     summon_cr = st.radio(
-        "",
+        "CR to summon",
         summonable_crs,
         format_func=ca_radio_format_func,
         label_visibility='collapsed'
@@ -89,7 +103,9 @@ def conjure_animals_dialog():
         )
         number = get_creature_num_from_cr(summon_cr)
 
-    mighty_summoner = st.checkbox("Apply Mighty Summoner (lvl 6)?", value=False)
+    mighty_summoner = st.checkbox("Apply Mighty Summoner (lvl 6)?", value=st.session_state.mighty_summoner)
+    print(f'st.session_state.mighty_summoner: {st.session_state.mighty_summoner}')
+    print(f'mighty_summoner: {mighty_summoner}')
 
     if st.button("Summon"):
         st.session_state.summoned_creatures = []
@@ -130,10 +146,9 @@ def load_dialog():
         st.rerun()
 
 
-
 st.title('Circle of Shepherd, Summon Manager')
 
-but_col1, but_col2, but_col3, but_col4 = st.columns([1,1,1,1])
+but_col1, but_col2, but_col3, but_col4, but_col5 = st.columns([1,1,1,1,1])
 with but_col1:
     st.button("Summon Anything",on_click=summon_dialog,use_container_width=True)
 with but_col2:
@@ -142,6 +157,9 @@ with but_col3:
     st.button("Save",on_click=save_dialog,use_container_width=True)
 with but_col4:
     st.button("Load",on_click=load_dialog,use_container_width=True)
+with but_col5:
+    if st.button("⚙ Settings",use_container_width=True):
+        st.switch_page("pages/settings.py")
 
 if len(st.session_state.summoned_creatures)>0:
     a_creature = st.session_state.summoned_creatures[0]
