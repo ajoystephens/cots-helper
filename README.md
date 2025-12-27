@@ -26,4 +26,6 @@ streamlit run shepherd.py
 * [x] settings page: mighty summoner default
 * [ ] settings page: flanking rule options
 * [ ] settings page: crit rule options (also ask james about campaign crit rules)
-* [ ] ettings page: creature select
+* [x] settings page: creature select
+* [ ] pin requirements file
+* [ ] add more detailed less techy instructions
