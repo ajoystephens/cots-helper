@@ -6,7 +6,7 @@ import streamlit_scrollable_textbox as stx
 from lib.creature import (
     Creature,
     get_all_creature_names,
-    get_creature_names_of_type_by_cr,
+    get_creature_names_of_type_by_cr_from_json,
 )
 
 from lib.utils import (
@@ -15,15 +15,17 @@ from lib.utils import (
     get_saved_sessions
 )
 
+from lib.config import Config
+
 CONFIG_FILENAME = 'config.ini'
 
 ################################################################################################
 # PAGE SETUP
 ################################################################################################
 def load_config():
-    st.session_state.config.read(CONFIG_FILENAME)
+    # st.session_state.config.read(CONFIG_FILENAME)
 
-    st.session_state.mighty_summoner = eval(st.session_state.config['class_abilities']['mighty_summoner'])
+    st.session_state.mighty_summoner = st.session_state.config.get_mighty_summoner()
 
 
 st.set_page_config(layout="wide")
@@ -34,8 +36,11 @@ if "summoned_creatures" not in st.session_state:
 if "session_log" not in st.session_state:
     st.session_state.session_log = [""]
 
+# if "config" not in st.session_state:
+#     st.session_state.config = configparser.ConfigParser()
 if "config" not in st.session_state:
-    st.session_state.config = configparser.ConfigParser()
+    st.session_state.config = Config()
+    # load_config()
 
 load_config()
 
@@ -86,7 +91,19 @@ def get_creature_num_from_cr(raw_cr):
 
 @st.dialog("Conjure Animals")
 def conjure_animals_dialog():
-    creature_options = get_creature_names_of_type_by_cr("beast")
+    st.caption("3rd-level Conjuration")
+
+    info = """
+        **Casting Time:** 1 action<br>
+        **Range:** 60 feet<br>
+        **Components:** V, S<br>
+        **Duration:** Concentration, up to 1 hour
+        """
+    st.markdown(info,unsafe_allow_html=True)
+    st.caption("go [here](%s) for the full spell description" % "https://roll20.net/compendium/dnd5e/Conjure%20Animals#content")
+
+    creature_options = get_creature_names_of_type_by_cr_from_json("beast")
+    creature_options = st.session_state.config.get_available_creature_names_of_type_by_cr("beast")
     allowed_cr = {"2","1","1/2","1/4"}
     
     summonable_crs = allowed_cr & set(creature_options.keys()) # intersection of allowed and existing
@@ -104,8 +121,6 @@ def conjure_animals_dialog():
         number = get_creature_num_from_cr(summon_cr)
 
     mighty_summoner = st.checkbox("Apply Mighty Summoner (lvl 6)?", value=st.session_state.mighty_summoner)
-    print(f'st.session_state.mighty_summoner: {st.session_state.mighty_summoner}')
-    print(f'mighty_summoner: {mighty_summoner}')
 
     if st.button("Summon"):
         st.session_state.summoned_creatures = []
@@ -152,13 +167,14 @@ but_col1, but_col2, but_col3, but_col4, but_col5 = st.columns([1,1,1,1,1])
 with but_col1:
     st.button("Summon Anything",on_click=summon_dialog,use_container_width=True)
 with but_col2:
-    st.button("Conjure Animals",type='primary',on_click=conjure_animals_dialog,use_container_width=True)
+    st.button("Conjure Animals :small[(3rd)]",type='primary',on_click=conjure_animals_dialog,use_container_width=True)
 with but_col3:
     st.button("Save",on_click=save_dialog,use_container_width=True)
 with but_col4:
     st.button("Load",on_click=load_dialog,use_container_width=True)
 with but_col5:
     if st.button("⚙ Settings",use_container_width=True):
+        del st.session_state['config']
         st.switch_page("pages/settings.py")
 
 if len(st.session_state.summoned_creatures)>0:
