@@ -18,12 +18,12 @@ streamlit run shepherd.py
 ```
 
 ## TODO
-- add flanking
-- add conjure woodland beings
-- add conjure fey
-- add more creatures
-- create settings page
-- settings page: mighty summoner default
-- settings page: flanking rule options
-- settings page: crit rule options (also ask james about campaign crit rules)
-- settings page: creature select
+[ ] add flanking
+[ ] add conjure woodland beings
+[ ] add conjure fey
+[ ] add more creatures
+[x] create settings page
+[x] settings page: mighty summoner default
+[ ] settings page: flanking rule options
+[ ] settings page: crit rule options (also ask james about campaign crit rules)
+[ ] ettings page: creature select

@@ -4,6 +4,7 @@ from pathlib import Path
 
 ROOT_DIR = Path(__file__).parent.parent.resolve()
 CREATURE_PATH = ROOT_DIR / "data/creatures.json"
+# CONFIG_FILENAME = 'config.ini'
 
 def get_all_creature_names():
         with open(CREATURE_PATH, 'r') as file:
@@ -17,16 +18,19 @@ def get_all_creature_names():
         return(creature_names)
 
 
-def get_creature_names_of_type_by_cr(c_type="beast"):
+def get_creature_names_of_type_by_cr_from_json(c_type="beast"):
+        # print('in get_creature_names_of_type_by_cr_from_json')
         with open(CREATURE_PATH, 'r') as file:
             data = json.load(file)
         
         creature_names = {}
         if data:
+            # print(f' - is data')
             for c in data:
                 cr = c["cr"]
                 name = c["name"]
                 this_type = c["type"]
+                # print(f' - cr: {cr}, name: {name}, type: {this_type}.... c_type: {c_type}, {this_type==c_type}')
 
                 if this_type==c_type:
                     if cr in creature_names:
@@ -35,6 +39,9 @@ def get_creature_names_of_type_by_cr(c_type="beast"):
                         creature_names[cr] = [name]
         
         return(creature_names)
+
+# def get_creature_is_available(c_name,xc_type,c_cr):
+
 
 class Creature:
     def __init__(self, name, mighty_summoner=False):
