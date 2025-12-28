@@ -44,8 +44,10 @@ def get_creature_names_of_type_by_cr_from_json(c_type="beast"):
 
 
 class Creature:
-    def __init__(self, name, mighty_summoner=False):
+    def __init__(self, name, mighty_summoner=False, flanking_bonus="advantage"):
         self.name = name
+
+        self.flanking_bonus = flanking_bonus
 
         self._load(mighty_summoner)
 
@@ -130,22 +132,22 @@ class Creature:
         return self.actions.keys()
     # def attack
 
-    def attack(self,attack_name,advantage=False,disadvantage=False):
+    def attack(self,attack_name,advantage=False,disadvantage=False,flanking=False):
         atk_details = self.actions[attack_name]
 
-        atk_roll, dmg_amount, description = self._single_attack(attack_name,advantage,disadvantage)
+        atk_roll, dmg_amount, description = self._single_attack(attack_name,advantage,disadvantage,flanking)
 
         if atk_details["multiattack"]:
-            atk_roll_2, dmg_amount_2, description_2 = self._single_attack(attack_name,advantage,disadvantage)
+            atk_roll_2, dmg_amount_2, description_2 = self._single_attack(attack_name,advantage,disadvantage,flanking)
 
             description = f'Multiattack, Total Dmg (if hit): {dmg_amount+dmg_amount_2}\n →→ ⚔️ {description}\n  →→ ⚔️ {description_2}'
         
         return description
 
-    def _single_attack(self,attack_name,advantage,disadvantage):
+    def _single_attack(self,attack_name,advantage,disadvantage,flanking):
         atk_details = self.actions[attack_name]
 
-        atk_roll, atk_roll_str, is_crit = self._get_attack_roll(attack_name,advantage,disadvantage)
+        atk_roll, atk_roll_str, is_crit = self._get_attack_roll(attack_name,advantage,disadvantage,flanking) # todo: finish flanking
         dmg_amount, dmg_str = self._get_attack_dmg(attack_name,is_crit)
 
         description = f'attack: {atk_roll_str}; dmg: {dmg_str}'
@@ -174,13 +176,14 @@ class Creature:
 
         return dmg, dmg_str
 
-    def _get_attack_roll(self,attack_name,advantage,disadvantage):
+    def _get_attack_roll(self,attack_name,advantage,disadvantage, flanking):
+        print(f'Creature.flanking_bonus: {self.flanking_bonus}')
         atk_details = self.actions[attack_name]
 
         atk_roll = self.roll_d(20)
         atk_roll_str = f'{atk_roll}'
 
-        if advantage:
+        if advantage or (flanking and self.flanking_bonus == 'advantage'):
             atk_roll_1 = self.roll_d(20)
             atk_roll_2 = self.roll_d(20)
             
@@ -197,8 +200,14 @@ class Creature:
         atk_mod = atk_details["attack"]
         is_crit = atk_roll==20
         atk_roll += atk_mod
-        atk_roll_str = f'{atk_roll} ({atk_roll_str}+{atk_mod})'
+        # atk_roll_str = f'{atk_roll} ({atk_roll_str}+{atk_mod})'
 
+        if flanking and self.flanking_bonus == '+1 attack':
+            atk_roll += 1
+            atk_roll_str = f'{atk_roll} ({atk_roll_str}+{atk_mod}+1)'
+        else: atk_roll_str = f'{atk_roll} ({atk_roll_str}+{atk_mod})'
+        
+        if flanking: atk_roll_str += ' (flanking)'
         if is_crit: atk_roll_str = f'🍀 {atk_roll_str}'
 
         return atk_roll, atk_roll_str,is_crit

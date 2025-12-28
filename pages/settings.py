@@ -12,8 +12,9 @@ CONFIG_FILENAME = 'config.ini'
 
 
 def save_config_on_click():
+    st.session_state.config.set_flanking_bonus(st.session_state.flanking_bonus)
     st.session_state.config.set_mighty_summoner(st.session_state.mighty_summoner)
-    print(f'st.session_state.available_beasts: \n{st.session_state.available_beasts}')
+    # print(f'st.session_state.available_beasts: \n{st.session_state.available_beasts}')
     st.session_state.config.set_creature_availability_of_type_by_cr(st.session_state.available_beasts)
 
 
@@ -26,14 +27,14 @@ def save_config_on_click():
     #      st.session_state.config.write(configfile)
 
 def load_config():
-    print(f'in load_config')
+    # print(f'in load_config')
     # st.session_state.config.read(CONFIG_FILENAME)
-
+    st.session_state.flanking_bonus = st.session_state.config.get_flanking_bonus(default="advantage")
     st.session_state.mighty_summoner = st.session_state.config.get_mighty_summoner()
 
     # st.session_state.available_beasts = {}
     st.session_state.available_beasts = st.session_state.config.get_creature_availability_of_type_by_cr(c_type='beast')
-    print(f'st.session_state.available_beasts: \n{st.session_state.available_beasts}')
+    # print(f'st.session_state.available_beasts: \n{st.session_state.available_beasts}')
     # beasts_from_json = get_creature_names_of_type_by_cr(c_type="beast")
     # beasts_from_config = st.session_state.config['available_beasts']
     # for cr in beasts_from_json:
@@ -62,6 +63,13 @@ def available_beast_on_change(cr,c_name):
 
 col1, col2 = st.columns(2)
 with col1:
+    st.write('## Game Mechanics')
+    flanking_bonus = st.radio(
+        "Flanking Bonus",
+        ["advantage", "+1 attack"],
+        key='flanking_bonus'
+    )
+
     st.write('## Class Features')
     mighty_summoner = st.toggle("Mighty Summoner (lvl 6 ability)", key='mighty_summoner')
 
@@ -88,4 +96,5 @@ with buttons_col1:
     st.button("💾 Save Config",type='primary',on_click=save_config_on_click,use_container_width=True)
 with buttons_col2:
     if st.button("Back to the App",use_container_width=True):
+        del st.session_state['config']
         st.switch_page("shepherd.py")

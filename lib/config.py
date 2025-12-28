@@ -46,6 +46,20 @@ class Config:
         keys = ['class_abilities','mighty_summoner']
         self._set_config_value(keys,value)
 
+
+    def get_flanking_bonus(self,default=False):
+        keys = ['game_mechanics','flanking_bonus']
+
+        value = self._get_config_value(keys,default)
+        return(value)
+    
+    def set_flanking_bonus(self,value):
+        # self.load()
+        # self._config['class_abilities']['mighty_summoner'] = value
+        # self.save()
+        keys = keys = ['game_mechanics','flanking_bonus']
+        self._set_config_value(keys,value)     
+
     def is_creature_available(self,cr,c_name,c_type):
         self.load()
         top_key = f'available_{c_type}'
@@ -67,24 +81,17 @@ class Config:
 
     def get_creature_availability_of_type_by_cr(self,c_type="beast"):
         # self._config.load()
-        # print('in get_creature_availability_of_type_by_cr')
         # must have crature info in json
         c_from_json = get_creature_names_of_type_by_cr_from_json(c_type)
-        # print(f' c_from_json: {c_from_json}')
         result = {}
         for cr in c_from_json:
-            print(f' - cr: {cr}')
             for c_name in c_from_json[cr]:
-                print(f' -- c_name: {c_name}')
                 top_key = f'available_{c_type}'
                 is_available = False # not available by default
-                print(f' -- c_name in self._config[top_key]: {c_name in self._config[top_key]}')
                 if top_key in self._config and c_name in self._config[top_key]:
-                    print(self._config[top_key][c_name])
                     is_available = self._config[top_key][c_name] in ('True', 'true') 
                 if cr not in result: result[cr] = {}
                 result[cr][c_name]=is_available
-        print(result)
         return(result)
     
     def set_creature_availability_of_type_by_cr(self,values,c_type="beast"):
@@ -92,12 +99,10 @@ class Config:
         top_key = f'available_{c_type}'
         
         self._config[top_key]={}
-        print(f'in set_creature_availability_of_type_by_cr, values: \n{values}')
         for cr in values:
             # tmp_config_placeholder = {}
             # self._config[top_key][cr]={}
             for c_name in values[cr]:
-                 print(f'values[cr][c_name]: {values[cr][c_name]}')
                  self._config[top_key][c_name] = str(values[cr][c_name])
             # self._config[top_key][cr]=tmp_config_placeholder
         self.save()
