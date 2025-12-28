@@ -43,6 +43,99 @@
         "source":"https://roll20.net/compendium/dnd5e/Wolf"
     },
     {
+        "name": "Dire Wolf",
+        "type": "beast",
+        "cr":"1",
+        "size": "large",
+        "alignment": "Unaligned",
+        "hit_dice": {"d10":5},
+        "ac": 14,
+        "hp": 37,
+        "speed": 50,
+        "swim_speed": 0,
+        "fly_speed": 0,
+        "darkvision": 0,
+        "abilities": {
+            "str": [17,3], 
+            "dex": [15,2],
+            "con": [15,2],
+            "int": [3,-4],
+            "wis": [12,1],
+            "cha": [7,-2]
+        },
+        "skills": {
+            "perception": 3,
+            "stealth": 4
+        },
+        "traits": {
+            "Keen Hearing and Smell": "The wolf has advantage on Wisdom (Perception) checks that rely on hearing or smell.",
+            "Pack Tactics": "The wolf has advantage on an attack roll against a creature if at least one of the wolf's allies is within 5 ft. of the creature and the ally isn't incapacitated."
+        },
+        "actions":{
+            "Bite": {
+                "attack":5,
+                "reach": 5,
+                "dmg_dice": {"d6":2},
+                "dmg_mod":3,
+                "dmg_type": "piercing",
+                "multiattack": false,
+                "note": "If the target is a creature, it must succeed on a DC 13 Strength saving throw or be knocked prone."
+            }
+        },
+        "source": "https://roll20.net/compendium/dnd5e/Dire%20Wolf"
+    },
+    {
+        "name": "Black Bear",
+        "type": "beast",
+        "cr":"1/2",
+        "size": "medium",
+        "alignment": "Unaligned",
+        "hit_dice": {"d8":3},
+        "ac": 11,
+        "hp": 19,
+        "speed": 40,
+        "swim_speed": 0,
+        "fly_speed": 0,
+        "climb_speed": 30,
+        "darkvision": 0,
+        "abilities": {
+            "str": [15,2], 
+            "dex": [10,0],
+            "con": [14,2],
+            "int": [2,-4],
+            "wis": [12,1],
+            "cha": [7,-2]
+        },
+        "skills": {
+            "perception": 3
+        },
+        "traits": {
+            "Keen Smell": "The bear has advantage on Wisdom (Perception) checks that rely on smell.",
+            "Multiattack": "The bear makes two attacks: one with its bite and one with its claws."
+        },
+        "actions":{
+            "Bite": {
+                "attack":4,
+                "reach": 5,
+                "dmg_dice": {"d6":1},
+                "dmg_mod":2,
+                "dmg_type": "piercing",
+                "multiattack": false,
+                "note": ""
+            },
+            "Claws": {
+                "attack":4,
+                "reach": 5,
+                "dmg_dice": {"d4":2},
+                "dmg_mod":2,
+                "dmg_type": "slashing",
+                "multiattack": false,
+                "note": ""
+            }
+        },
+        "source": "https://roll20.net/compendium/dnd5e/Monsters:Black%20Bear"
+    },
+    {
         "name": "Polar Bear",
         "type": "beast",
         "cr":"2",
