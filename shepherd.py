@@ -26,6 +26,7 @@ def load_config():
     # st.session_state.config.read(CONFIG_FILENAME)
 
     st.session_state.mighty_summoner = st.session_state.config.get_mighty_summoner()
+    st.session_state.flanking_bonus = st.session_state.config.get_flanking_bonus()
 
 
 st.set_page_config(layout="wide")
@@ -64,7 +65,8 @@ def summon_dialog():
         st.session_state.session_log = []
 
         for i in range(number):
-            st.session_state.summoned_creatures.append(Creature(creature,mighty_summoner))
+            print(f'st.session_state.flanking_bonus: {st.session_state.flanking_bonus}')
+            st.session_state.summoned_creatures.append(Creature(creature,mighty_summoner,flanking_bonus=st.session_state.flanking_bonus))
 
         st.session_state.session_log.append(f"🔮 Summoned {number} {creature}, Mighty Summoner = {mighty_summoner}\n")
         st.rerun()
@@ -127,7 +129,7 @@ def conjure_animals_dialog():
         st.session_state.session_log = []
 
         for i in range(number):
-            st.session_state.summoned_creatures.append(Creature(creature,mighty_summoner))
+            st.session_state.summoned_creatures.append(Creature(creature,mighty_summoner,flanking_bonus=st.session_state.flanking_bonus))
 
         st.session_state.session_log.append(f"🔮 Summoned {number} {creature}, Mighty Summoner = {mighty_summoner}\n")
         st.rerun()
@@ -314,7 +316,13 @@ def atk_roll_on_click(idx):
     k = f'atk_disadvantage_{idx}'
     has_disadvantage = st.session_state[k]
 
-    atk_desc = creature.attack(atk_type,advantage=has_advantage,disadvantage=has_disadvantage)
+    k = f'atk_flanking_{idx}'
+    is_flanking = st.session_state[k]
+
+    atk_desc = creature.attack(atk_type,
+                               advantage=has_advantage,
+                               disadvantage=has_disadvantage,
+                               flanking=is_flanking)
 
     # creature.give_temp_hp(amount)
 
@@ -323,12 +331,12 @@ def atk_roll_on_click(idx):
     st.session_state.session_log.append(description)
 
 
-col_names = ["","№",'HP','Temp HP','Update HP Value',":small[dmg]",":small[heal]",":small[tmp]","Attack",":red[:material/casino:]",":green[:material/casino:]",""]
-creature_header_cols = st.columns([1,1,1,1,2,1,1,1,2,1,1,1])
+col_names = ["","№",'HP','Temp HP','Update HP Value',":small[dmg]",":small[heal]",":small[tmp]","Attack",":red[:material/casino:]",":green[:material/casino:]",":grey[:material/group:]",""]
+creature_header_cols = st.columns([1,1,1,1,2,1,1,1,2,1,1,1,1])
 for col, name in zip(creature_header_cols,col_names): col.write(f':grey[{name}]')
 
 for idx, c in enumerate(st.session_state.summoned_creatures):
-    select_col, cc_col1, cc_col2, cc_col3, cc_col4, cc_col5, cc_col6, cc_col7, cc_col8, cc_col9, cc_col10, cc_col11 = st.columns([1,1,1,1,2,1,1,1,2,1,1,1])
+    select_col, cc_col1, cc_col2, cc_col3, cc_col4, cc_col5, cc_col6, cc_col7, cc_col8, cc_col9, cc_col10, cc_col11, cc_col12 = st.columns([1,1,1,1,2,1,1,1,2,1,1,1,1])
 
     creature = st.session_state.summoned_creatures[idx]
     c_number = idx+1
@@ -395,7 +403,13 @@ for idx, c in enumerate(st.session_state.summoned_creatures):
         label_visibility="collapsed",
         key=f'atk_advantage_{idx}')
     
-    atk_button_phold = cc_col11.empty()
+    atk_flanking_phold = cc_col11.empty()
+    atk_flanking = atk_flanking_phold.checkbox(
+        "flanking",
+        label_visibility="collapsed",
+        key=f'atk_flanking_{idx}')
+    
+    atk_button_phold = cc_col12.empty()
     atk_button = atk_button_phold.button(
         "⚔️",
         key=f'atk_{idx}',
@@ -436,9 +450,15 @@ def bulk_attack_on_click():
             k = f'atk_disadvantage_{i}'
             has_disadvantage = st.session_state[k]
 
+            k = f'atk_flanking_{i}'
+            is_flanking = st.session_state[k]
+
             c_number = i+1
 
-            atk_desc = creature.attack(atk_type,advantage=has_advantage,disadvantage=has_disadvantage)
+            atk_desc = creature.attack(atk_type,
+                                    advantage=has_advantage,
+                                    disadvantage=has_disadvantage,
+                                    flanking=is_flanking)
 
             note_txt += f' → ⚔️ Creature {c_number} rolled {atk_type} attack → {atk_desc}\n'
 
