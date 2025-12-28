@@ -23,7 +23,7 @@ Once you have summoned some creatures you can interact with them in the followin
 
 ![creature interactions](readme_images/creature_interactions.png)
 
-> [!INFO]
+> [!note]
 > Here I refer to creatures by number to make things easy on myself. In the tokens directory you'll find the numbered tokens that I use. Blank token was generated with Token Stamp 2.
 
 ### Adding Creatures
