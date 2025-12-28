@@ -29,3 +29,4 @@ streamlit run shepherd.py
 * [x] settings page: creature select
 * [ ] pin requirements file
 * [ ] add more detailed less techy instructions
+* [ ] consider multiattack (ex. Polar Bear)
