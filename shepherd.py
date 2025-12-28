@@ -106,9 +106,8 @@ def conjure_animals_dialog():
 
     creature_options = get_creature_names_of_type_by_cr_from_json("beast")
     creature_options = st.session_state.config.get_available_creature_names_of_type_by_cr("beast")
-    allowed_cr = {"2","1","1/2","1/4"}
-    
-    summonable_crs = allowed_cr & set(creature_options.keys()) # intersection of allowed and existing
+ 
+    summonable_crs = ["2","1","1/2","1/4"]
     summon_cr = st.radio(
         "CR to summon",
         summonable_crs,

@@ -177,7 +177,7 @@ class Creature:
         return dmg, dmg_str
 
     def _get_attack_roll(self,attack_name,advantage,disadvantage, flanking):
-        print(f'Creature.flanking_bonus: {self.flanking_bonus}')
+        # print(f'Creature.flanking_bonus: {self.flanking_bonus}')
         atk_details = self.actions[attack_name]
 
         atk_roll = self.roll_d(20)
